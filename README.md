@@ -24,27 +24,44 @@ The models are trained on the **WELFake dataset** (72,112 articles) with an 80/2
 ## Quick Start: Reproduce All Results
 
 ### 1. Clone Repository & Navigate
-```bash
-cd path/to/fake-news-detection
+```powershell
+git clone https://github.com/tominister/lin-fp.git
+cd lin-fp
 ```
 
 ### 2. Create Virtual Environment
-```bash
+```powershell
 python -m venv .venv
-# On Windows:
-.venv\Scripts\Activate.ps1
-# On macOS/Linux:
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+.\.venv\Scripts\Activate.ps1
+```
+
+```bash
+# macOS/Linux
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
 ### 3. Install Dependencies
+```powershell
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
 ```bash
+# macOS/Linux
+python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
 ### 4. Run Models (Generate All Outputs)
-```bash
+```powershell
 python src/run_tommy_models.py
+```
+
+```bash
+# macOS/Linux
+python3 src/run_tommy_models.py
 ```
 
 This command creates the `results/` folder if it does not exist and generates all metrics/plots/report files automatically.
@@ -52,12 +69,12 @@ This command creates the `results/` folder if it does not exist and generates al
 **Execution time**: ~5-15 minutes (depending on hardware)
 
 ### 5. Review Results
-```bash
-# Metrics and configurations
-cat results/direct_metrics.json
+```powershell
+# Metrics and configurations (PowerShell)
+Get-Content results/direct_metrics.json
 
 # Detailed analysis
-cat results/REPORT.txt
+Get-Content results/REPORT.txt
 
 # View plots
 # Open these in your preferred image viewer:
@@ -65,15 +82,19 @@ cat results/REPORT.txt
 # - results/lstm_model_metrics.png
 ```
 
+```bash
+# macOS/Linux
+cat results/direct_metrics.json
+cat results/REPORT.txt
+```
+
 ---
 
-
-
-### Verify Data Files
-Crete this folder at project root:
+### Step 3: Verify Data Files
+Create this folder at project root:
 - `news_datasets/`
 
-The dataset files are intentionally not tracked in this repository due GitHub file-size limits. Download them from:
+The dataset files are intentionally not tracked in this repository due to GitHub file-size limits. Download them from:
 - Recovery dataset: https://drive.google.com/file/d/1ck63CyypYRx3coXvL668xBPWb0sR9XQM/view
 - WELFake dataset: https://www.kaggle.com/datasets/saurabhshahane/fake-news-classification
 
@@ -89,8 +110,19 @@ news_datasets/
 - Recovery: reliability = 0 (unreliable) or 1 (reliable)
 
 ### Step 4: Run Full Pipeline
+```powershell
+python src/run_tommy_models.py `
+  --max-features 25000 `
+  --ngram-max 1 `
+  --max-words 20000 `
+  --max-len 200 `
+  --lstm-epochs 6 `
+  --lstm-batch-size 96
+```
+
 ```bash
-python src/run_tommy_models.py \
+# macOS/Linux
+python3 src/run_tommy_models.py \
   --max-features 25000 \
   --ngram-max 1 \
   --max-words 20000 \
@@ -124,8 +156,17 @@ python src/run_tommy_models.py \
 | `--extra-blocked-terms [TERMS...]` | Additional terms to remove during text normalization |
 
 ### Example: Custom Configuration
+```powershell
+python src/run_tommy_models.py `
+  --max-features 30000 `
+  --ngram-max 2 `
+  --lstm-epochs 8 `
+  --disable-keyword-removal
+```
+
 ```bash
-python src/run_tommy_models.py \
+# macOS/Linux
+python3 src/run_tommy_models.py \
   --max-features 30000 \
   --ngram-max 2 \
   --lstm-epochs 8 \
@@ -254,8 +295,13 @@ tf.random.set_seed(SEED)
 
 ### Plot Files Not Generated
 Check for matplotlib backend issues:
-```bash
+```powershell
 python -c "import matplotlib; print(matplotlib.get_backend())"
+```
+
+```bash
+# macOS/Linux
+python3 -c "import matplotlib; print(matplotlib.get_backend())"
 ```
 
 ---

@@ -1,0 +1,169 @@
+================================================================================
+FAKE NEWS DETECTION: QUICK SETUP & RUN
+================================================================================
+
+This file contains step-by-step instructions to reproduce all results.
+
+================================================================================
+PREREQUISITE: Python 3.10+
+================================================================================
+
+Check your Python version:
+  python --version
+
+If you don't have Python 3.10+, download from https://www.python.org/downloads/
+
+================================================================================
+STEP 1: CREATE VIRTUAL ENVIRONMENT (2 minutes)
+================================================================================
+
+Windows PowerShell:
+  python -m venv .venv
+  .venv\Scripts\Activate.ps1
+
+macOS/Linux:
+  python -m venv .venv
+  source .venv/bin/activate
+
+================================================================================
+STEP 2: INSTALL DEPENDENCIES (3-5 minutes)
+================================================================================
+
+  pip install -r requirements.txt
+
+This installs all required packages (xgboost, tensorflow, keras, scikit-learn, 
+pandas, numpy, matplotlib, seaborn).
+
+================================================================================
+STEP 3: VERIFY DATA FILES EXIST
+================================================================================
+
+Check that these files exist at the project root:
+
+  News_Dataset/WELFake_Dataset.csv      (72,112 rows)
+  News_Dataset/recovery-news-data.csv   (2,029 rows)
+
+OR using the alternate supported folder name:
+
+  news_datasets/WELFake_Dataset.csv
+  news_datasets/recovery-news-data.csv
+
+If missing, download and place them in either News_Dataset/ or news_datasets/.
+
+Datasets are not committed to this repository because of GitHub file-size limits.
+Download from:
+  Recovery dataset: https://drive.google.com/file/d/1ck63CyypYRx3coXvL668xBPWb0sR9XQM/view
+  WELFake dataset: https://www.kaggle.com/datasets/saurabhshahane/fake-news-classification
+
+================================================================================
+STEP 4: RUN THE FULL PIPELINE (5-15 minutes)
+================================================================================
+
+  python src/run_tommy_models.py
+
+This trains XGBoost and LSTM models and generates:
+  ✓ results/direct_metrics.json         (All metrics and configurations)
+  ✓ results/xgboost_model_metrics.png   (Performance plot)
+  ✓ results/lstm_model_metrics.png      (Performance plot)
+  ✓ results/REPORT.txt                  (Full analysis report)
+
+Note: The results/ folder is created automatically when you run the command.
+
+================================================================================
+STEP 5: VIEW RESULTS
+================================================================================
+
+View the metrics:
+  cat results/direct_metrics.json
+
+View the detailed report:
+  cat results/REPORT.txt
+
+View the plots (open in image viewer):
+  results/xgboost_model_metrics.png
+  results/lstm_model_metrics.png
+
+================================================================================
+OPTIONAL: CUSTOMIZE HYPERPARAMETERS
+================================================================================
+
+You can modify model configurations:
+
+  python src/run_tommy_models.py \
+    --max-features 30000 \          # TF-IDF vocabulary (default: 25000)
+    --ngram-max 2 \                 # N-gram size (default: 1)
+    --max-words 25000 \             # LSTM vocab (default: 20000)
+    --max-len 250 \                 # Sequence length (default: 200)
+    --lstm-epochs 8 \               # LSTM epochs (default: 6)
+    --lstm-batch-size 64            # Batch size (default: 96)
+
+All parameters are optional; defaults reproduce the paper results.
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Problem: "ModuleNotFoundError: No module named 'xgboost'"
+Solution: pip install xgboost==2.0.3
+
+Problem: "ModuleNotFoundError: No module named 'tensorflow'"
+Solution: pip install tensorflow==2.17.0
+
+Problem: "FileNotFoundError: News_Dataset/WELFake_Dataset.csv"
+Solution: Ensure data files exist in News_Dataset/ or news_datasets/ directory
+
+Problem: LSTM training is very slow
+Solution: Results are reproducible on CPU. For speed, use GPU or reduce epochs:
+  python src/run_tommy_models.py --lstm-epochs 3
+
+Problem: ".venv\Scripts\Activate.ps1 execution policy" error
+Solution: Run this once:
+  Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+
+================================================================================
+REPRODUCIBILITY NOTES
+================================================================================
+
+✓ Results are reproducible (fixed random seed: 42)
+✓ All dependencies pinned to exact versions
+✓ Single command generates all outputs
+✓ Metrics saved as JSON (machine-readable)
+✓ Plots generated as PNG (visual verification)
+✓ Report saved as TXT (human-readable analysis)
+
+Minor variations (0.1-0.5%) may occur on GPU due to floating-point differences.
+For strict reproducibility, use CPU:
+  export CUDA_VISIBLE_DEVICES=-1  # Linux/macOS
+  set CUDA_VISIBLE_DEVICES=-1      # Windows
+
+================================================================================
+EXPECTED RESULTS SUMMARY
+================================================================================
+
+XGBoost Performance:
+  - WELFake validation: ~97% F1 score (in-domain)
+  - Recovery test: ~74% F1 score (out-of-domain)
+  - Finding: Severe overfitting to WELFake patterns
+
+LSTM Performance:
+  - WELFake validation: ~85% F1 score (in-domain)
+  - Recovery test: ~82% F1 score (out-of-domain)
+  - Finding: Better generalization, lower in-domain accuracy
+
+See results/REPORT.txt for detailed analysis and root cause investigation.
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+For more details, see:
+  - README.md              (Comprehensive documentation)
+  - REPRODUCIBILITY.md     (Detailed reproducibility checklist)
+  - results/REPORT.txt     (Full analysis with findings)
+
+To customize or extend the project:
+  - src/models/             (Model implementations)
+  - src/preprocessing/      (Text preprocessing)
+  - src/results_utils/      (Plotting and reporting)
+
+================================================================================

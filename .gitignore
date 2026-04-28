@@ -1,0 +1,43 @@
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data files (keep datasets but not large temp files)
+*.csv.bak
+*.tmp
+News_Dataset/*.csv
+news_datasets/*.csv
+
+# Results (keep for reference but can be regenerated)
+# Uncomment if you want to exclude results from git:
+# results/direct_metrics.json
+# results/*.png
+# results/REPORT.txt
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+Thumbs.db
+.DS_Store

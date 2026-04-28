@@ -67,32 +67,11 @@ cat results/REPORT.txt
 
 ---
 
-## Detailed Setup Instructions
 
-### Step 1: Verify Python Installation
-```bash
-python --version  # Should be 3.10 or higher
-```
 
-### Step 2: Install Package Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-**Required packages**:
-- `numpy==2.3.2` — Numerical computing
-- `pandas==2.3.2` — Data manipulation
-- `scikit-learn==1.7.1` — Machine learning (TF-IDF, metrics)
-- `tensorflow==2.17.0` — Deep learning (LSTM, Keras)
-- `keras==3.11.3` — Neural network API
-- `xgboost==2.0.3` — Gradient boosting
-- `matplotlib==3.10.7` — Plotting
-- `seaborn==0.13.2` — Statistical visualization
-
-### Step 3: Verify Data Files
-Ensure the following datasets are present in one of these folders at project root:
-- `News_Dataset/` (supported)
-- `news_datasets/` (supported)
+### Verify Data Files
+Crete this folder at project root:
+- `news_datasets/`
 
 The dataset files are intentionally not tracked in this repository due GitHub file-size limits. Download them from:
 - Recovery dataset: https://drive.google.com/file/d/1ck63CyypYRx3coXvL668xBPWb0sR9XQM/view
@@ -100,7 +79,7 @@ The dataset files are intentionally not tracked in this repository due GitHub fi
 
 Required files:
 ```
-News_Dataset/
+news_datasets/
   ├── WELFake_Dataset.csv        (72,112 rows, columns: title, text, label)
   └── recovery-news-data.csv      (2,029 rows, columns: title, body_text, reliability)
 ```
@@ -177,24 +156,6 @@ Complete metrics and configurations in JSON format:
 }
 ```
 
-### 2. **REPORT.txt**
-Human-readable analysis report covering:
-- Problem statement and motivation
-- Dataset description and preprocessing steps
-- Model architectures and rationale
-- Experimental setup
-- Performance results (table format)
-- Overfitting analysis and root causes
-- Limitations and recommendations
-
-### 3. **xgboost_model_metrics.png**
-Bar plot comparing:
-- Accuracy, Precision, Recall, F1 scores
-- Side-by-side: WELFake validation vs Recovery test
-
-### 4. **lstm_model_metrics.png**
-Same format as XGBoost plot for easy comparison
-
 ---
 
 ## Model Configurations
@@ -249,33 +210,6 @@ Dense (1 unit, Sigmoid) → Binary output
 - Class weights: Balanced (inverse of class frequencies)
 - Learning rate reduction: 0.5× if validation loss plateaus
 
----
-
-## Key Results & Findings
-
-### Expected Performance Summary
-
-| Model | Dataset | Accuracy | Precision | Recall | F1 |
-|-------|---------|----------|-----------|--------|-----|
-| **XGBoost** | WELFake (validation) | ~97% | ~97% | ~96% | ~97% |
-| **XGBoost** | Recovery (external) | ~73% | ~72% | ~77% | ~74% |
-| **LSTM** | WELFake (validation) | ~85% | ~84% | ~86% | ~85% |
-| **LSTM** | Recovery (external) | ~82% | ~81% | ~83% | ~82% |
-
-### Key Insights
-
-1. **XGBoost Overfitting**: Strong in-domain (97% F1) but degrades significantly on Recovery (74% F1)
-   - Likely captures dataset-specific artifacts and publisher markers
-   - More expressive model with larger feature space
-
-2. **LSTM Generalization**: More modest in-domain (85% F1) but maintains better transfer (82% F1)
-   - Lower capacity acts as regularization
-   - Learns sequential patterns rather than bag-of-words artifacts
-
-3. **Dataset Shift**:
-   - WELFake: ~49% fake, 51% real
-   - Recovery: ~33% fake, 67% real
-   - Different class distributions affect both models
 
 ---
 
@@ -309,33 +243,9 @@ np.random.seed(SEED)
 tf.random.set_seed(SEED)
 ```
 
-**Note**: Some minor variation may occur due to:
-- TensorFlow's non-deterministic GPU operations
-- Floating-point arithmetic differences across hardware
-- XGBoost's multi-threading behavior
-
-For strict reproducibility on CPU-only environments, disable GPU:
-```bash
-export CUDA_VISIBLE_DEVICES=-1
-python src/run_tommy_models.py
-```
-
 ---
 
-## Troubleshooting
 
-### Error: `ModuleNotFoundError: No module named 'xgboost'`
-```bash
-pip install xgboost==2.0.3
-```
-
-### Error: `ModuleNotFoundError: No module named 'tensorflow'`
-```bash
-pip install tensorflow==2.17.0
-```
-
-### Error: `FileNotFoundError: News_Dataset/WELFake_Dataset.csv`
-Ensure data files exist at project root in either `News_Dataset/` or `news_datasets/`.
 
 ### LSTM Training is Very Slow
 - Ensure you're using GPU (check: `nvidia-smi`)
@@ -356,7 +266,7 @@ python -c "import matplotlib; print(matplotlib.get_backend())"
 .
 ├── README.md                          # This file
 ├── requirements.txt                   # Python dependencies
-├── News_Dataset/ or news_datasets/
+├── news_datasets/
 │   ├── WELFake_Dataset.csv
 │   └── recovery-news-data.csv
 ├── src/
@@ -386,34 +296,3 @@ python -c "import matplotlib; print(matplotlib.get_backend())"
 
 ---
 
-## Citation
-
-If you use this project, please cite:
-
-```bibtex
-@misc{fakenews_detection_2025,
-  title={Fake News Detection: XGBoost vs LSTM Comparison},
-  author={Your Name},
-  year={2025},
-  howpublished={\url{https://github.com/yourusername/fake-news-detection}}
-}
-```
-
----
-
-## License
-
-[Specify your license here, e.g., MIT, Apache 2.0, etc.]
-
----
-
-## Contact & Support
-
-For issues or questions:
-1. Check the **Troubleshooting** section above
-2. Review `results/REPORT.txt` for analysis details
-3. Inspect `results/direct_metrics.json` for raw metrics
-4. Open an issue on GitHub with:
-   - Full error message and traceback
-   - Python version and OS
-   - Output of `pip list | grep -E "(xgboost|tensorflow|keras|scikit)"`
